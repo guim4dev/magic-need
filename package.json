@@ -1,0 +1,41 @@
+{
+  "name": "magic-need",
+  "version": "1.0.0",
+  "description": "Capture tool/data needs from AI agents — let your agent spec your product for you",
+  "main": "src/index.js",
+  "bin": {
+    "magic-need": "bin/magic-need"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "lint": "eslint src/ bin/",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "cli",
+    "tool",
+    "roadmap",
+    "integration"
+  ],
+  "author": "Thiago Guimarães <guima@guima.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guim4dev/magic-need.git"
+  },
+  "bugs": {
+    "url": "https://github.com/guim4dev/magic-need/issues"
+  },
+  "homepage": "https://github.com/guim4dev/magic-need#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ]
+}
