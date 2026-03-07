@@ -1,36 +1,36 @@
 #!/usr/bin/env node
 /**
  * magic-need CLI
- * Registra necessidades de ferramentas/dados que o agente identifica
- * Uso: magic-need "descrição da necessidade"
+ * Captures tool/data needs identified by AI agents
+ * Usage: magic-need "description of the need"
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Determina diretório de dados (preferência: ~/.magic-need, fallback: ./data)
+// Determine data directory (preference: ~/.magic-need, fallback: ./data)
 function getDataDir() {
   const homeDir = require('os').homedir();
   const globalDataDir = path.join(homeDir, '.magic-need');
   
-  // Se estiver instalado globalmente ou ~/.magic-need existir, usa lá
+  // Use global dir if MAGIC_NEED_DATA is set or ~/.magic-need exists
   if (process.env.MAGIC_NEED_DATA || fs.existsSync(globalDataDir)) {
     return globalDataDir;
   }
   
-  // Fallback para diretório local (desenvolvimento)
+  // Fallback to local directory (development)
   return path.join(process.cwd(), 'data');
 }
 
 const DATA_DIR = getDataDir();
 const DATA_FILE = path.join(DATA_DIR, 'needs.json');
 
-// Garante que diretório existe
+// Ensure directory exists
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Carrega dados existentes
+// Load existing needs
 function loadNeeds() {
   if (!fs.existsSync(DATA_FILE)) {
     return [];
@@ -42,17 +42,17 @@ function loadNeeds() {
   }
 }
 
-// Salva dados
+// Save needs
 function saveNeeds(needs) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(needs, null, 2));
 }
 
-// Gera ID curto
+// Generate short ID
 function generateId() {
   return Math.random().toString(36).substring(2, 8);
 }
 
-// Comando: add
+// Command: add
 function addNeed(description) {
   const needs = loadNeeds();
   const need = {
@@ -64,12 +64,12 @@ function addNeed(description) {
   };
   needs.push(need);
   saveNeeds(needs);
-  console.log(`✅ Need registrado: #${need.id}`);
+  console.log(`✅ Need registered: #${need.id}`);
   console.log(`   "${need.description}"`);
   return need.id;
 }
 
-// Infer categoria baseada no texto
+// Infer category based on text
 function inferCategory(description) {
   const lower = description.toLowerCase();
   if (lower.includes('api') || lower.includes('endpoint')) return 'integration';
@@ -81,24 +81,24 @@ function inferCategory(description) {
   return 'general';
 }
 
-// Comando: list
+// Command: list
 function listNeeds() {
   const needs = loadNeeds();
   if (needs.length === 0) {
-    console.log('📭 Nenhum need registrado ainda.');
+    console.log('📭 No needs registered yet.');
     return;
   }
   
-  console.log(`📋 ${needs.length} need(s) registrado(s):\n`);
+  console.log(`📋 ${needs.length} need(s) registered:\n`);
   needs.forEach(n => {
-    const date = new Date(n.createdAt).toLocaleDateString('pt-BR');
+    const date = new Date(n.createdAt).toLocaleDateString();
     const status = n.status === 'pending' ? '⏳' : '✅';
     console.log(`${status} #${n.id} [${n.category}] (${date})`);
     console.log(`   ${n.description}\n`);
   });
 }
 
-// Comando: report (para cronjob)
+// Command: report (for cronjob)
 function generateReport() {
   const needs = loadNeeds();
   const pending = needs.filter(n => n.status === 'pending');
@@ -107,15 +107,15 @@ function generateReport() {
     return null;
   }
   
-  // Agrupa por categoria
+  // Group by category
   const byCategory = {};
   pending.forEach(n => {
     if (!byCategory[n.category]) byCategory[n.category] = [];
     byCategory[n.category].push(n);
   });
   
-  // Formata relatório
-  let report = `🪄 **Magic Need Report** — ${pending.length} pendente(s)\n\n`;
+  // Format report
+  let report = `🪄 **Magic Need Report** — ${pending.length} pending\n\n`;
   
   Object.entries(byCategory).forEach(([cat, items]) => {
     const emoji = getCategoryEmoji(cat);
@@ -126,7 +126,7 @@ function generateReport() {
     report += '\n';
   });
   
-  report += `_Total de needs registrados: ${needs.length} | Gerado em: ${new Date().toLocaleString('pt-BR')}_`;
+  report += `_Total needs registered: ${needs.length} | Generated: ${new Date().toLocaleString()}_`;
   
   return report;
 }
@@ -148,22 +148,22 @@ function getCategoryEmoji(cat) {
 const args = process.argv.slice(2);
 const command = args[0];
 
-// Se não houver args, ou o primeiro arg não é um comando conhecido, trata como descrição
+// If no args, or first arg is not a known command, treat as description
 const knownCommands = ['add', 'list', 'report', 'clear', '--help', '-h'];
 const isCommand = command && knownCommands.includes(command);
 
 if (!isCommand) {
-  // Descrição passada diretamente
+  // Description passed directly
   const description = args.join(' ');
   if (!description) {
-    console.log('Uso: magic-need "descrição da necessidade"');
+    console.log('Usage: magic-need "description of the need"');
     process.exit(1);
   }
   addNeed(description);
 } else if (command === 'add') {
   const description = args.slice(1).join(' ');
   if (!description) {
-    console.log('Uso: magic-need add "descrição da necessidade"');
+    console.log('Usage: magic-need add "description of the need"');
     process.exit(1);
   }
   addNeed(description);
@@ -180,25 +180,25 @@ if (!isCommand) {
   const needs = loadNeeds();
   const pending = needs.filter(n => n.status === 'pending');
   if (pending.length === 0) {
-    console.log('Nenhum need pendente para limpar.');
+    console.log('No pending needs to clear.');
   } else {
     needs.forEach(n => {
       if (n.status === 'pending') n.status = 'archived';
     });
     saveNeeds(needs);
-    console.log(`🗑️ ${pending.length} need(s) arquivado(s).`);
+    console.log(`🗑️ ${pending.length} need(s) archived.`);
   }
 } else {
   console.log(`
 🪄 magic-need CLI
 
-Uso:
-  magic-need "descrição"     Registra uma nova necessidade
-  magic-need list            Lista todas as necessidades
-  magic-need report          Gera relatório para o cronjob
-  magic-need clear           Arquiva needs pendentes
+Usage:
+  magic-need "description"     Register a new need
+  magic-need list              List all needs
+  magic-need report            Generate report for cronjob
+  magic-need clear             Archive pending needs
 
-O agente pode usar isso quando identificar que precisa de
-uma ferramenta/dado que não tem disponível.
+The agent can use this when it identifies it needs
+a tool or data that is not available.
   `);
 }
