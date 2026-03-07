@@ -3,7 +3,19 @@
 > Capture tool/data needs from AI agents — let your agent spec your product for you.
 Give your AI agent a tool that "does nothing" but lets it express what it's missing. The agent becomes a proxy for your best engineer and specs your integration roadmap for you.
 
-## Install
+## For OpenClaw Users
+
+This CLI is included in the `magic-need` skill. Install via:
+
+```bash
+clawhub install magic-need
+```
+
+Then use: `node ~/.openclaw/skills/magic-need/scripts/cli.js "description"`
+
+Skill repo: <https://github.com/guim4dev/skill-magic-need>
+
+## For NPM Users
 
 ```bash
 npm install -g magic-need
