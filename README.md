@@ -1,8 +1,7 @@
 # 🪄 magic-need
 
 > Capture tool/data needs from AI agents — let your agent spec your product for you.
-
-Inspired by the [Sonarly post](https://www.linkedin.com/posts/activity-7300895216097521664-XF8M) about their `magic_fetch` tool. Give your AI agent a tool that "does nothing" but lets it express what it's missing. The agent becomes a proxy for your best engineer and specs your integration roadmap for you.
+Give your AI agent a tool that "does nothing" but lets it express what it's missing. The agent becomes a proxy for your best engineer and specs your integration roadmap for you.
 
 ## Install
 
