@@ -8,17 +8,22 @@
 const fs = require('fs');
 const path = require('path');
 
-// Determine data directory (preference: ~/.magic-need, fallback: ./data)
+// Determine data directory (preference: MAGIC_NEED_DATA > ~/.magic-need > ./data)
 function getDataDir() {
   const homeDir = require('os').homedir();
   const globalDataDir = path.join(homeDir, '.magic-need');
   
-  // Use global dir if MAGIC_NEED_DATA is set or ~/.magic-need exists
-  if (process.env.MAGIC_NEED_DATA || fs.existsSync(globalDataDir)) {
+  // Priority 1: MAGIC_NEED_DATA env var (explicit override)
+  if (process.env.MAGIC_NEED_DATA) {
+    return process.env.MAGIC_NEED_DATA;
+  }
+  
+  // Priority 2: Use ~/.magic-need if it exists
+  if (fs.existsSync(globalDataDir)) {
     return globalDataDir;
   }
   
-  // Fallback to local directory (development)
+  // Priority 3: Fallback to local directory (development)
   return path.join(process.cwd(), 'data');
 }
 
